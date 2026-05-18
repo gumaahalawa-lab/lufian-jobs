@@ -127,7 +127,7 @@ function buildLangBar(){document.getElementById('langBar').innerHTML=Object.entr
 function setLang(lang){currentLang=lang;localStorage.setItem('pi_lang',lang);document.documentElement.lang=lang;document.documentElement.dir=LANGS[lang].dir;renderAll();}
 function loginWithPi(){Pi.authenticate(['username','payments'],function(){}).then(function(auth){document.getElementById('loginBtn').textContent=auth.user.username;}).catch(function(){});}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
-try{Pi.init({version:'2.0',sandbox:true});}catch(e){}
+
 
 var LABELS={
   en:{hero:'Find Jobs in the <span style="color:var(--gold)">Pi Economy</span>',sub:'Thousands of jobs paying in Pi cryptocurrency worldwide',search:'Job title or skill...',searchBtn:'Search',login:'Login with Pi',postBtn:'+ Post Job',s1:'Active Jobs',s2:'Companies',s3:'Countries',s4:'Salary Currency',featTitle:'Latest Jobs',tabs:['All','Remote','Full-time','Part-time','Freelance'],postTitle:'Post a Job',titleLabel:'Job Title',compLabel:'Company',salLabel:'Salary (pi/month)',descLabel2:'Description',postSubmit:'Post Job for 1pi',applyText:'Apply',jobs:[{title:'Pi App Developer',company:'Pi Ventures',salary:'500 pi/mo',tags:['Remote','Full-time','React'],icon:'💻'},{title:'Blockchain Analyst',company:'CryptoPI Ltd',salary:'600 pi/mo',tags:['Remote','Finance','Crypto'],icon:'📊'},{title:'UI/UX Designer',company:'PiDesign Co',salary:'400 pi/mo',tags:['Remote','Part-time','Figma'],icon:'🎨'},{title:'Community Manager',company:'Pi Network',salary:'300 pi/mo',tags:['Remote','Marketing'],icon:'🌐'},{title:'Content Writer',company:'PiMedia',salary:'200 pi/mo',tags:['Freelance','Writing'],icon:'✍️'}]},
@@ -171,19 +171,24 @@ function postJob(){
 function applyJob(title){showToast('Applied to: '+title);}
 renderAll();
 
+}catch(e){ console.log('Pi SDK error:',e); }
+  }, 500);
+});
+
 // Auto-authenticate on load as required by Pi App Studio
 window.addEventListener('load', function(){
-  setTimeout(function(){
-    try{
-      Pi.authenticate(['username','payments'], function(p){ console.log('Incomplete:',p); }).then(function(auth){
-        if(auth && auth.user){
-          try{ var btn=document.getElementById('loginBtn'); if(btn) btn.textContent=auth.user.username; }catch(e){}
-          try{ var un=document.getElementById('userName'); if(un) un.textContent=auth.user.username; }catch(e){}
-          try{ var ub=document.getElementById('userBar'); if(ub) ub.classList.add('visible'); }catch(e){}
-        }
-      }).catch(function(e){ console.log('Auth error:',e); });
-    }catch(e){ console.log('Pi SDK error:',e); }
-  }, 500);
+  try{
+    Pi.init({version:'2.0'});
+  }catch(e){}
+  try{
+    Pi.authenticate(['username','payments'], function(p){ console.log('Incomplete:',p); }).then(function(auth){
+      if(auth && auth.user){
+        try{ var btn=document.getElementById('loginBtn'); if(btn) btn.textContent=auth.user.username; }catch(e){}
+        try{ var un=document.getElementById('userName'); if(un) un.textContent=auth.user.username; }catch(e){}
+        try{ var ub=document.getElementById('userBar'); if(ub) ub.classList.add('visible'); }catch(e){}
+      }
+    }).catch(function(e){ console.log('Auth error:',e); });
+  }catch(e){ console.log('Pi SDK error:',e); }
 });
 
 </script>
