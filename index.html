@@ -170,6 +170,22 @@ function postJob(){
 }
 function applyJob(title){showToast('Applied to: '+title);}
 renderAll();
+
+// Auto-authenticate on load as required by Pi App Studio
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    try{
+      Pi.authenticate(['username','payments'], function(p){ console.log('Incomplete:',p); }).then(function(auth){
+        if(auth && auth.user){
+          try{ var btn=document.getElementById('loginBtn'); if(btn) btn.textContent=auth.user.username; }catch(e){}
+          try{ var un=document.getElementById('userName'); if(un) un.textContent=auth.user.username; }catch(e){}
+          try{ var ub=document.getElementById('userBar'); if(ub) ub.classList.add('visible'); }catch(e){}
+        }
+      }).catch(function(e){ console.log('Auth error:',e); });
+    }catch(e){ console.log('Pi SDK error:',e); }
+  }, 500);
+});
+
 </script>
 </body>
 </html>
